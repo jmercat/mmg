@@ -49,6 +49,7 @@ int MMG2_scaleMesh(MMG5_pMesh mesh,MMG5_pSol sol) {
   //Displ     pd;
   MMG5_pPoint    ppt;
   MMG5_Info     *info;
+  MMG5_pPar      par;
   int            i,k,iadr,sethmin,sethmax;
   double         dd,isqhmin,isqhmax;
   double         *m;
@@ -90,6 +91,14 @@ int MMG2_scaleMesh(MMG5_pMesh mesh,MMG5_pSol sol) {
     if ( !M_VOK(ppt) )  continue;
     ppt->c[0] = dd * (ppt->c[0] - info->min[0]);
     ppt->c[1] = dd * (ppt->c[1] - info->min[1]);
+  }
+
+  /* normalize local parameters */
+  for (k=0; k<mesh->info.npar; k++) {
+    par = &mesh->info.par[k];
+    par->hmin  *= dd;
+    par->hmax  *= dd;
+    par->hausd *= dd;
   }
 
   /* Check if hmin/hmax have been provided by the user and scale it if yes */
@@ -305,6 +314,7 @@ int MMG2_scaleMesh(MMG5_pMesh mesh,MMG5_pSol sol) {
 int MMG2_unscaleMesh(MMG5_pMesh mesh,MMG5_pSol sol) {
   MMG5_pPoint     ppt;
   MMG5_Info      *info;
+  MMG5_pPar       par;
   double     dd;
   int        i,k,iadr;
 
@@ -341,6 +351,14 @@ int MMG2_unscaleMesh(MMG5_pMesh mesh,MMG5_pSol sol) {
   mesh->info.hmin  *= dd;
   mesh->info.hmax  *= dd;
   mesh->info.hausd *= dd;
+
+  /* normalize local parameters */
+  for (k=0; k<mesh->info.npar; k++) {
+    par = &mesh->info.par[k];
+    par->hmin  *= dd;
+    par->hmax  *= dd;
+    par->hausd *= dd;
+  }
 
   return(1);
 }
