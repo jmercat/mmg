@@ -95,7 +95,7 @@ int main(int argc,char *argv[]) {
 
   /* Set default metric size */
   if ( !MMG3D_Set_solSize(mesh,met,MMG5_Vertex,0,MMG5_Scalar) )
-    _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+    _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
 
   /* command line */
   if ( !MMG3D_parsar(argc,argv,mesh,met) )  return(MMG5_STRONGFAILURE);
@@ -105,24 +105,24 @@ int main(int argc,char *argv[]) {
   chrono(ON,&MMG5_ctim[1]);
   /* read mesh file */
   if ( MMG3D_loadMesh(mesh,mesh->namein)<1 )
-    _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+    _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
 
   /* read displacement if any */
   if ( mesh->info.lag > -1 ) {
     if ( !MMG3D_Set_solSize(mesh,disp,MMG5_Vertex,0,MMG5_Vector) )
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
 
     if ( !MMG3D_Set_inputSolName(mesh,disp,met->namein) )
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
 
     ier = MMG3D_loadSol(mesh,disp,disp->namein);
     if ( ier == 0 ) {
       fprintf(stdout,"  ## ERROR: NO DISPLACEMENT FOUND.\n");
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
     }
     else if ( ier == -1 ) {
       fprintf(stdout,"  ## ERROR: WRONG DATA TYPE OR WRONG SOLUTION NUMBER.\n");
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
     }
   }
   /* read metric if any */
@@ -130,14 +130,14 @@ int main(int argc,char *argv[]) {
     ier = MMG3D_loadSol(mesh,met,met->namein);
     if ( ier == -1 ) {
       fprintf(stdout,"  ## ERROR: WRONG DATA TYPE OR WRONG SOLUTION NUMBER.\n");
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
     }
     if ( mesh->info.iso && !ier ) {
       fprintf(stdout,"  ## ERROR: NO ISOVALUE DATA.\n");
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
     }
     if ( !MMG3D_parsop(mesh,met) )
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_LOWFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_LOWFAILURE);
   }
 
   chrono(OFF,&MMG5_ctim[1]);
@@ -159,10 +159,10 @@ int main(int argc,char *argv[]) {
     if ( mesh->info.imprim )
       fprintf(stdout,"\n  -- WRITING DATA FILE %s\n",mesh->nameout);
     if ( !MMG3D_saveMesh(mesh,mesh->nameout) )
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
 
     if ( !MMG3D_saveSol(mesh,met,met->nameout) )
-      _MMG5_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
+      _MMG3D_RETURN_AND_FREE(mesh,met,disp,MMG5_STRONGFAILURE);
 
     chrono(OFF,&MMG5_ctim[1]);
     if ( mesh->info.imprim )
@@ -170,5 +170,5 @@ int main(int argc,char *argv[]) {
   }
 
   /* free mem */
-  _MMG5_RETURN_AND_FREE(mesh,met,disp,ier);
+  _MMG3D_RETURN_AND_FREE(mesh,met,disp,ier);
 }

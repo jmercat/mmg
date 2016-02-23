@@ -47,7 +47,7 @@
 
 
 /** Free allocated pointers of mesh and sol structure and return value val */
-#define _MMG5_RETURN_AND_FREE(mesh,met,val)do                 \
+#define _MMGS_RETURN_AND_FREE(mesh,met,val)do                 \
   {                                                           \
     MMGS_Free_all(MMG5_ARG_start,                             \
                   MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&met,  \
@@ -57,7 +57,7 @@
 
 /** Reallocation of point table and sol table and creation
     of point ip with coordinates o and tag tag*/
-#define _MMG5_POINT_REALLOC(mesh,sol,ip,wantedGap,law,o,tag ) do        \
+#define _MMGS_POINT_REALLOC(mesh,sol,ip,wantedGap,law,o,tag ) do        \
   {                                                                     \
     int klink;                                                          \
                                                                         \
@@ -83,7 +83,7 @@
 
 /** Reallocation of tria table and creation
     of tria jel */
-#define _MMG5_TRIA_REALLOC( mesh,jel,wantedGap,law ) do                 \
+#define _MMGS_TRIA_REALLOC( mesh,jel,wantedGap,law ) do                 \
   {                                                                     \
     int klink,oldSiz;                                                   \
                                                                         \

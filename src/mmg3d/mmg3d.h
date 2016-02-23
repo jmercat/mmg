@@ -29,7 +29,7 @@
 #define MG_SMSGN(a,b)  (((double)(a)*(double)(b) > (0.0)) ? (1) : (0))
 
 /** Free allocated pointers of mesh and sol structure and return value val */
-#define _MMG5_RETURN_AND_FREE(mesh,met,disp,val)do            \
+#define _MMG3D_RETURN_AND_FREE(mesh,met,disp,val)do           \
   {                                                           \
     MMG3D_Free_all(MMG5_ARG_start,                            \
                    MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&met, \
@@ -40,7 +40,7 @@
 
 /** Reallocation of point table and sol table and creation
     of point ip with coordinates o and tag tag*/
-#define _MMG5_POINT_REALLOC(mesh,sol,ip,wantedGap,law,o,tag ) do        \
+#define _MMG3D_POINT_REALLOC(mesh,sol,ip,wantedGap,law,o,tag ) do        \
   {                                                                     \
     int klink;                                                          \
                                                                         \
@@ -66,7 +66,7 @@
 
 /** Reallocation of point table, sol table and bucket table and creation
     of point ip with coordinates o and tag tag*/
-#define _MMG5_POINT_AND_BUCKET_REALLOC(mesh,sol,ip,wantedGap,law,o,tag ) do \
+#define _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,sol,ip,wantedGap,law,o,tag ) do \
   {                                                                     \
     int klink,gap;                                                      \
                                                                         \
@@ -113,7 +113,7 @@
 
 /** Reallocation of tetra table and creation
     of tetra jel */
-#define _MMG5_TETRA_REALLOC(mesh,jel,wantedGap,law ) do                 \
+#define _MMG3D_TETRA_REALLOC(mesh,jel,wantedGap,law ) do                 \
   {                                                                     \
     int klink,oldSiz;                                                   \
                                                                         \

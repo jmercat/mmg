@@ -92,20 +92,22 @@
 #define   MMG2D_IPARAM_nomove             10
 ! /*!< [1/0] Avoid/allow surface modifications */
 #define   MMG2D_IPARAM_nosurf             11
+! /*!< [n] Number of local parameters */
+#define   MMG2D_IPARAM_numberOfLocalParam 12
 ! /*!< [n] Specify the size of the bucket per dimension (DELAUNAY) */
-#define   MMG2D_IPARAM_bucket             12
+#define   MMG2D_IPARAM_bucket             13
 ! /*!< [val] Value for angle detection */
-#define   MMG2D_DPARAM_angleDetection     13
+#define   MMG2D_DPARAM_angleDetection     14
 ! /*!< [val] Minimal mesh size */
-#define   MMG2D_DPARAM_hmin               14
+#define   MMG2D_DPARAM_hmin               15
 ! /*!< [val] Maximal mesh size */
-#define   MMG2D_DPARAM_hmax               15
+#define   MMG2D_DPARAM_hmax               16
 ! /*!< [val] Control global Hausdorff distance (on all the boundary surfaces of the mesh) */
-#define   MMG2D_DPARAM_hausd              16
+#define   MMG2D_DPARAM_hausd              17
 ! /*!< [val] Control gradation */
-#define   MMG2D_DPARAM_hgrad              17
+#define   MMG2D_DPARAM_hgrad              18
 ! /*!< [val] Value of level-set (not use for now) */
-#define   MMG2D_DPARAM_ls                 18
+#define   MMG2D_DPARAM_ls                 19
 
 ! /*----------------------------- functions header -----------------------------*/
 ! /* Initialization functions */
@@ -211,6 +213,35 @@
 !  */
 
 ! int MMG2D_Set_dparameter(MMG5_pMesh mesh, MMG5_pSol sol, int dparam, double val);
+! /**
+!  * \param mesh pointer toward the mesh structure.
+!  * \param sol pointer toward the sol structure.
+!  * \param typ type of entity (triangle, edge,...).
+!  * \param ref reference of the entity.
+!  * \param hmin minimal edge size.
+!  * \param hmax maximal edge size.
+!  * \param hausd value of the Hausdorff number.
+!  * \return 0 if failed, 1 otherwise.
+!  *
+!  * Set local parameters: set the hausdorff value at \a val for all
+!  * elements of type \a typ and reference \a ref.
+!  *
+!  */
+
+! int  MMG2D_Set_localParameter(MMG5_pMesh mesh, MMG5_pSol sol, int typ, int ref,
+!                               double hmin,double hmax,double hausd);
+! /**
+!  * \param mesh pointer toward the mesh structure.
+!  * \param met pointer toward the sol structure.
+!  * \return 1.
+!  *
+!  * Read local parameters file. This file must have the same name as
+!  * the mesh with the \a .mmg2d extension or must be named \a
+!  * DEFAULT.mmg2d.
+!  *
+!  */
+
+! int  MMG2D_parsop(MMG5_pMesh mesh,MMG5_pSol met);
 
 ! /* init structure datas */
 ! /**

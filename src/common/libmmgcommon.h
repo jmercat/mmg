@@ -94,6 +94,7 @@ enum MMG5_type {
 enum MMG5_entities {
   MMG5_Noentity, /*!< Undefined type (unusable) */
   MMG5_Vertex, /*!< Vertex entity */
+  MMG5_Edges, /*!< Edge entity */
   MMG5_Triangle, /*!< Triangle entity */
 };
 

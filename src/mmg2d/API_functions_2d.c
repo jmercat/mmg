@@ -172,6 +172,7 @@ void MMG2D_Init_parameters(MMG5_pMesh mesh) {
  *
  */
 int MMG2D_Set_iparameter(MMG5_pMesh mesh, MMG5_pSol sol, int iparam, int val){
+  int k;
 
   switch ( iparam ) {
     /* Integer parameters */
@@ -239,6 +240,28 @@ int MMG2D_Set_iparameter(MMG5_pMesh mesh, MMG5_pSol sol, int iparam, int val){
   case MMG2D_IPARAM_nosurf :
     mesh->info.nosurf   = val;
     break;
+  case MMG2D_IPARAM_numberOfLocalParam :
+    if ( mesh->info.par ) {
+      _MMG5_DEL_MEM(mesh,mesh->info.par,mesh->info.npar*sizeof(MMG5_Par));
+      if ( (mesh->info.imprim > 5) || mesh->info.ddebug )
+        fprintf(stdout,"  ## Warning: new local parameter values\n");
+    }
+    mesh->info.npar  = val;
+    mesh->info.npari = 0;
+    _MMG5_ADD_MEM(mesh,mesh->info.npar*sizeof(MMG5_Par),"parameters",
+                  printf("  Exit program.\n");
+                  exit(EXIT_FAILURE));
+    _MMG5_SAFE_CALLOC(mesh->info.par,mesh->info.npar,MMG5_Par);
+
+    for (k=0; k<mesh->info.npar; k++) {
+      mesh->info.par[k].elt   = MMG5_Noentity;
+      mesh->info.par[k].ref   = INT_MAX;
+      mesh->info.par[k].hausd = mesh->info.hausd;
+      mesh->info.par[k].hmin  = mesh->info.hmin;
+      mesh->info.par[k].hmax  = mesh->info.hmax;
+    }
+    break;
+
   default :
     fprintf(stdout,"  ## Error: unknown type of parameter\n");
     return(0);
@@ -297,6 +320,78 @@ int MMG2D_Set_dparameter(MMG5_pMesh mesh, MMG5_pSol sol, int dparam, double val)
 }
 
 
+/**
+ * \param mesh pointer toward the mesh structure.
+ * \param sol pointer toward the sol structure.
+ * \param typ type of entity (triangle, edge,...).
+ * \param ref reference of the entity.
+ * \param hmin minimal edge size.
+ * \param hmax maximal edge size.
+ * \param hausd value of the Hausdorff number.
+ * \return 0 if failed, 1 otherwise.
+ *
+ * Set local parameters: set the hausdorff value at \a val for all
+ * elements of type \a typ and reference \a ref.
+ *
+ */
+int MMG2D_Set_localParameter(MMG5_pMesh mesh,MMG5_pSol sol, int typ, int ref,
+                             double hmin,double hmax,double hausd){
+  int k;
+
+  if ( !mesh->info.npar ) {
+    fprintf(stdout,"  ## Error: You must set the number of local parameters");
+    fprintf(stdout," with the MMG2D_Set_iparameters function before setting");
+    fprintf(stdout," values in local parameters structure. \n");
+    return(0);
+  }
+  if ( mesh->info.npari > mesh->info.npar ) {
+    fprintf(stdout,"  ## Error: unable to set a new local parameter.\n");
+    fprintf(stdout,"    max number of local parameters: %d\n",mesh->info.npar);
+    return(0);
+  }
+
+  switch ( typ ) {
+    /* double parameters */
+  case MMG5_Edges :
+    for (k=0; k<mesh->info.npari; k++) {
+      if ( mesh->info.par[k].ref == ref ) {
+        mesh->info.par[k].hausd = hausd;
+        if ( (mesh->info.imprim > 5) || mesh->info.ddebug ) {
+          if ( typ == MMG5_Edges ) {
+            fprintf(stdout,"  ## Warning: new parameters (hausd, hmin and hmax)");
+            fprintf(stdout," for edges of ref %d\n",ref);
+          }
+          else {
+            fprintf(stdout,"  ## Warning: new parameters (hausd, hmin and hmax)");
+            fprintf(stdout," for edges of ref %d\n",ref);
+          }
+        }
+        return(1);
+      }
+    }
+    if ( mesh->info.npari == mesh->info.npar ) {
+      fprintf(stdout,"  ## Error: unable to set a new local parameter.\n");
+      fprintf(stdout,"    max number of local parameters: %d\n",mesh->info.npar);
+      return(0);
+    }
+    mesh->info.par[mesh->info.npari].elt   = typ;
+    mesh->info.par[mesh->info.npari].ref   = ref;
+    mesh->info.par[mesh->info.npari].hmin  = hmin;
+    mesh->info.par[mesh->info.npari].hmax  = hmax;
+    mesh->info.par[mesh->info.npari].hausd = hausd;
+    mesh->info.npari++;
+    break;
+  default :
+    fprintf(stdout,"  ## Warning: you must apply your local parameters");
+    fprintf(stdout," on edges (MMG5_Edges or %d).\n",
+            MMG5_Edges);
+
+    fprintf(stdout,"  ## Ignored.\n");
+    return(1);
+  }
+
+  return(1);
+}
 
 /**
  * \param mesh pointer toward the mesh structure.

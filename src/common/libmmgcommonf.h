@@ -125,8 +125,10 @@
 #define   MMG5_Noentity                0
 ! /*!< Vertex entity */
 #define   MMG5_Vertex                  1
+! /*!< Edge entity */
+#define   MMG5_Edges                   2
 ! /*!< Triangle entity */
-#define   MMG5_Triangle                2
+#define   MMG5_Triangle                3
 
 ! /**
 !  * \struct MMG5_Par

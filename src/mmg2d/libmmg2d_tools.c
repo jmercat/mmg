@@ -261,3 +261,69 @@ void MMG2D_Free_solutions(MMG5_pMesh mesh,MMG5_pSol sol) {
 
   return;
 }
+
+
+/**
+ * \param mesh pointer toward the mesh structure.
+ * \param met pointer toward the sol structure.
+ * \return 1.
+ *
+ * Read local parameters file. This file must have the same name as
+ * the mesh with the \a .mmg2d extension or must be named \a
+ * DEFAULT.mmg2d.
+ *
+ */
+int MMG2D_parsop(MMG5_pMesh mesh,MMG5_pSol met) {
+  float       fp1,fp2,hausd;
+  int         ref,i,j,ret,npar;
+  char       *ptr,buf[256],data[256];
+  FILE       *in;
+
+  /* check for parameter file */
+  strcpy(data,mesh->namein);
+  ptr = strstr(data,".mesh");
+  if ( ptr )  *ptr = '\0';
+  strcat(data,".mmg2d");
+  in = fopen(data,"rb");
+  if ( !in ) {
+    sprintf(data,"%s","DEFAULT.mmg2d");
+    in = fopen(data,"rb");
+    if ( !in ) {
+      return(1);
+    }
+  }
+  fprintf(stdout,"  %%%% %s OPENED\n",data);
+
+  /* read parameters */
+  while ( !feof(in) ) {
+    /* scan line */
+    ret = fscanf(in,"%s",data);
+    if ( !ret || feof(in) )  break;
+    for (i=0; i<strlen(data); i++) data[i] = tolower(data[i]);
+
+    /* check for condition type */
+    if ( !strcmp(data,"parameters") ) {
+      fscanf(in,"%d",&npar);
+      if ( !MMG2D_Set_iparameter(mesh,met,MMG2D_IPARAM_numberOfLocalParam,npar) )
+        exit(EXIT_FAILURE);
+
+      for (i=0; i<mesh->info.npar; i++) {
+        ret = fscanf(in,"%d %s ",&ref,buf);
+        ret = fscanf(in,"%f %f %f",&fp1,&fp2,&hausd);
+        for (j=0; j<strlen(buf); j++)  buf[j] = tolower(buf[j]);
+
+        if ( !strcmp(buf,"edges") || !strcmp(buf,"edge") ) {
+          if ( !MMG2D_Set_localParameter(mesh,met,MMG5_Edges,ref,fp1,fp2,hausd) ) {
+            exit(EXIT_FAILURE);
+          }
+        }
+        else {
+          fprintf(stdout,"  %%%% Wrong format: %s\n",buf);
+          continue;
+        }
+      }
+    }
+  }
+  fclose(in);
+  return(1);
+}

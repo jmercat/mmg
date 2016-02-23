@@ -378,7 +378,7 @@ int MMG2_baseBdry(MMG5_pMesh mesh) {
         } else {
           num = _MMG5_newEdge(mesh);
           if ( !num ) {
-            _MMG5_EDGE_REALLOC(mesh,num,mesh->gap,
+            _MMG2D_EDGE_REALLOC(mesh,num,mesh->gap,
                                printf("  ## Error: unable to allocate a new edge.\n");
                                _MMG5_INCREASE_MEM_MESSAGE();
                                printf("  Exit program.\n");
@@ -413,7 +413,7 @@ int MMG2_baseBdry(MMG5_pMesh mesh) {
         } else {
           num = _MMG5_newEdge(mesh);
           if ( !num ) {
-            _MMG5_EDGE_REALLOC(mesh,num,mesh->gap,
+            _MMG2D_EDGE_REALLOC(mesh,num,mesh->gap,
                                printf("  ## Error: unable to allocate a new edge.\n");
                                _MMG5_INCREASE_MEM_MESSAGE();
                                printf("  Exit program.\n");

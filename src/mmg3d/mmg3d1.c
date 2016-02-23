@@ -900,7 +900,7 @@ _MMG5_anatetv(MMG5_pMesh mesh,MMG5_pSol met,char typchk) {
         if ( !ip ) {
           /* reallocation of point table */
 
-          _MMG5_POINT_REALLOC(mesh,met,ip,mesh->gap,
+          _MMG3D_POINT_REALLOC(mesh,met,ip,mesh->gap,
                               printf("  ## Error: unable to allocate a new point\n");
                               _MMG5_INCREASE_MEM_MESSAGE();
                               memlack=1;
@@ -1112,7 +1112,7 @@ _MMG5_anatets(MMG5_pMesh mesh,MMG5_pSol met,char typchk) {
         ip = _MMG3D_newPt(mesh,o,MG_BDY);
         if ( !ip ) {
           /* reallocation of point table */
-          _MMG5_POINT_REALLOC(mesh,met,ip,mesh->gap,
+          _MMG3D_POINT_REALLOC(mesh,met,ip,mesh->gap,
                               printf("  ## Error: unable to allocate a new point.\n");
                               _MMG5_INCREASE_MEM_MESSAGE();
                               do {

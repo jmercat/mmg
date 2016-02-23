@@ -63,6 +63,7 @@ enum MMG2D_Param {
   MMG2D_IPARAM_noswap,            /*!< [1/0], Avoid/allow edge or face flipping */
   MMG2D_IPARAM_nomove,            /*!< [1/0], Avoid/allow point relocation */
   MMG2D_IPARAM_nosurf,            /*!< [1/0], Avoid/allow surface modifications */
+  MMG2D_IPARAM_numberOfLocalParam,/*!< [n], Number of local parameters */
   MMG2D_IPARAM_bucket,            /*!< [n], Specify the size of the bucket per dimension (DELAUNAY) */
   MMG2D_DPARAM_angleDetection,    /*!< [val], Value for angle detection */
   MMG2D_DPARAM_hmin,              /*!< [val], Minimal mesh size */
@@ -167,6 +168,33 @@ int MMG2D_Set_iparameter(MMG5_pMesh mesh, MMG5_pSol sol, int iparam, int val);
  *
  */
 int MMG2D_Set_dparameter(MMG5_pMesh mesh, MMG5_pSol sol, int dparam, double val);
+/**
+ * \param mesh pointer toward the mesh structure.
+ * \param sol pointer toward the sol structure.
+ * \param typ type of entity (triangle, edge,...).
+ * \param ref reference of the entity.
+ * \param hmin minimal edge size.
+ * \param hmax maximal edge size.
+ * \param hausd value of the Hausdorff number.
+ * \return 0 if failed, 1 otherwise.
+ *
+ * Set local parameters: set the hausdorff value at \a val for all
+ * elements of type \a typ and reference \a ref.
+ *
+ */
+int  MMG2D_Set_localParameter(MMG5_pMesh mesh, MMG5_pSol sol, int typ, int ref,
+                              double hmin,double hmax,double hausd);
+/**
+ * \param mesh pointer toward the mesh structure.
+ * \param met pointer toward the sol structure.
+ * \return 1.
+ *
+ * Read local parameters file. This file must have the same name as
+ * the mesh with the \a .mmg2d extension or must be named \a
+ * DEFAULT.mmg2d.
+ *
+ */
+int  MMG2D_parsop(MMG5_pMesh mesh,MMG5_pSol met);
 
 /* init structure datas */
 /**

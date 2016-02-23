@@ -179,7 +179,7 @@ _MMG5_boucle_for(MMG5_pMesh mesh, MMG5_pSol met,_MMG5_pBucket bucket,int ne,
         if ( !ip ) {
           /* reallocation of point table */
           if ( bucket ) {
-            _MMG5_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
+            _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
                                            *warn=1;
                                            goto collapse,
                                            o,tag);
@@ -258,7 +258,7 @@ _MMG5_boucle_for(MMG5_pMesh mesh, MMG5_pSol met,_MMG5_pBucket bucket,int ne,
         if ( !ip )  {
           /* reallocation of point table */
           if ( bucket ) {
-            _MMG5_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
+            _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
                                            *warn=1;
                                            goto collapse,
                                            o,MG_NOTAG);
@@ -306,7 +306,7 @@ _MMG5_boucle_for(MMG5_pMesh mesh, MMG5_pSol met,_MMG5_pBucket bucket,int ne,
         if ( !ip )  {
           /* reallocation of point table */
           if ( bucket ) {
-            _MMG5_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
+            _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
                                            *warn=1;
                                            goto collapse,
                                            o,MG_NOTAG);
@@ -500,7 +500,7 @@ _MMG5_boucle_for(MMG5_pMesh mesh, MMG5_pSol met,_MMG5_pBucket bucket,int ne,
           if ( !ip ){
             /* reallocation of point table */
             if ( bucket ) {
-              _MMG5_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
+              _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
                                              *warn=1;
                                              goto collapse2//break
                                              ,o,tag);
@@ -579,7 +579,7 @@ _MMG5_boucle_for(MMG5_pMesh mesh, MMG5_pSol met,_MMG5_pBucket bucket,int ne,
           if ( !ip )  {
             /* reallocation of point table */
             if ( bucket ) {
-              _MMG5_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
+              _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
                                              *warn=1;
                                              goto collapse2
                                              ,o,MG_NOTAG);
@@ -626,7 +626,7 @@ _MMG5_boucle_for(MMG5_pMesh mesh, MMG5_pSol met,_MMG5_pBucket bucket,int ne,
           if ( !ip )  {
             /* reallocation of point table */
             if ( bucket ) {
-              _MMG5_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
+              _MMG3D_POINT_AND_BUCKET_REALLOC(mesh,met,ip,mesh->gap,
                                              *warn=1;
                                              goto collapse2,
                                              o,MG_NOTAG);

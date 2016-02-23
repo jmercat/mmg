@@ -160,7 +160,7 @@ int MMG2_split(MMG5_pMesh mesh,MMG5_pSol sol,int ip,int k1,int adj1) {
 
   jel  = _MMG2D_newElt(mesh);
   if ( !jel ) {
-    _MMG5_TRIA_REALLOC(mesh,jel,mesh->gap,
+    _MMG2D_TRIA_REALLOC(mesh,jel,mesh->gap,
                        printf("  ## Error: unable to allocate a new element.\n");
                        _MMG5_INCREASE_MEM_MESSAGE();
                        printf("  Exit program.\n");
@@ -172,7 +172,7 @@ int MMG2_split(MMG5_pMesh mesh,MMG5_pSol sol,int ip,int k1,int adj1) {
   }
   kel  = _MMG2D_newElt(mesh);
   if ( !kel ) {
-    _MMG5_TRIA_REALLOC(mesh,kel,mesh->gap,
+    _MMG2D_TRIA_REALLOC(mesh,kel,mesh->gap,
                        printf("  ## Error: unable to allocate a new element.\n");
                        _MMG5_INCREASE_MEM_MESSAGE();
                        printf("  Exit program.\n");
@@ -218,7 +218,7 @@ int MMG2_split(MMG5_pMesh mesh,MMG5_pSol sol,int ip,int k1,int adj1) {
     ped = &mesh->edge[num];
     newed = _MMG5_newEdge(mesh);
     if ( !newed ) {
-      _MMG5_EDGE_REALLOC(mesh,newed,mesh->gap,
+      _MMG2D_EDGE_REALLOC(mesh,newed,mesh->gap,
                          printf("  ## Error: unable to allocate a new edge.\n");
                          _MMG5_INCREASE_MEM_MESSAGE();
                          printf("  Exit program.\n");
@@ -352,7 +352,7 @@ int MMG2_splitbdry(MMG5_pMesh mesh,MMG5_pSol sol,int ip,int k1,int voy1,double *
 
   jel  = _MMG2D_newElt(mesh);
   if ( !jel ) {
-    _MMG5_TRIA_REALLOC(mesh,jel,mesh->gap,
+    _MMG2D_TRIA_REALLOC(mesh,jel,mesh->gap,
                        printf("  ## Error: unable to allocate a new element.\n");
                        _MMG5_INCREASE_MEM_MESSAGE();
                        printf("  Exit program.\n");
@@ -408,7 +408,7 @@ int MMG2_splitbdry(MMG5_pMesh mesh,MMG5_pSol sol,int ip,int k1,int voy1,double *
 
   newed = _MMG5_newEdge(mesh);
   if ( !newed ) {
-    _MMG5_EDGE_REALLOC(mesh,newed,mesh->gap,
+    _MMG2D_EDGE_REALLOC(mesh,newed,mesh->gap,
                        printf("  ## Error: unable to allocate a new edge.\n");
                        _MMG5_INCREASE_MEM_MESSAGE();
                        printf("  Exit program.\n");

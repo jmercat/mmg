@@ -202,7 +202,7 @@ int MMG2_insertpoint(MMG5_pMesh mesh,MMG5_pSol sol) {
     /*creation de trois triangles*/
     mel = _MMG2D_newElt(mesh);
     if ( !mel ) {
-      _MMG5_TRIA_REALLOC(mesh,mel,mesh->gap,
+      _MMG2D_TRIA_REALLOC(mesh,mel,mesh->gap,
                          printf("  ## Error: unable to allocate a new element.\n");
                          _MMG5_INCREASE_MEM_MESSAGE();
                          printf("  Exit program.\n");
@@ -211,7 +211,7 @@ int MMG2_insertpoint(MMG5_pMesh mesh,MMG5_pSol sol) {
     }
     nel = _MMG2D_newElt(mesh);
     if ( !nel ) {
-      _MMG5_TRIA_REALLOC(mesh,mel,mesh->gap,
+      _MMG2D_TRIA_REALLOC(mesh,mel,mesh->gap,
                          printf("  ## Error: unable to allocate a new element.\n");
                          _MMG5_INCREASE_MEM_MESSAGE();
                          printf("  Exit program.\n");
@@ -850,7 +850,7 @@ int MMG2_mmg2d2(MMG5_pMesh mesh,MMG5_pSol sol) {
   /*creation des deux premiers triangles + adjacence*/
   jel  = _MMG2D_newElt(mesh);
   if ( !jel ) {
-    _MMG5_TRIA_REALLOC(mesh,jel,mesh->gap,
+    _MMG2D_TRIA_REALLOC(mesh,jel,mesh->gap,
                        printf("  ## Error: unable to allocate a new element.\n");
                        _MMG5_INCREASE_MEM_MESSAGE();
                        printf("  Exit program.\n");
@@ -864,7 +864,7 @@ int MMG2_mmg2d2(MMG5_pMesh mesh,MMG5_pSol sol) {
 
   kel  = _MMG2D_newElt(mesh);
   if ( !kel ) {
-    _MMG5_TRIA_REALLOC(mesh,kel,mesh->gap,
+    _MMG2D_TRIA_REALLOC(mesh,kel,mesh->gap,
                        printf("  ## Error: unable to allocate a new element.\n");
                        _MMG5_INCREASE_MEM_MESSAGE();
                        printf("  Exit program.\n");

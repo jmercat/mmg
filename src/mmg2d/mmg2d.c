@@ -440,6 +440,8 @@ int main(int argc,char *argv[]) {
       fprintf(stdout,"  ## ERROR: NO ISOVALUE DATA.\n");
       _MMG2D_RETURN_AND_FREE(mesh,sol,MMG5_STRONGFAILURE);
     }
+    if ( !MMG2D_parsop(mesh,sol) )
+      _MMG2D_RETURN_AND_FREE(mesh,sol,MMG5_LOWFAILURE);
   }
 
   chrono(OFF,&MMG5_ctim[1]);

@@ -116,3 +116,15 @@ FORTRAN_NAME(MMG2D_FREE_SOLUTIONS,mmg2d_free_solutions,
 
   return;
 }
+
+/**
+ * See \ref MMG2D_parsop function in \ref mmg2d/libmmg2d.h file.
+ */
+FORTRAN_NAME(MMG2D_PARSOP,mmg2d_parsop,
+             (MMG5_pMesh *mesh,MMG5_pSol *met,int* retval),
+             (mesh,met,retval)) {
+
+  *retval = MMG2D_parsop(*mesh, *met);
+
+  return;
+}
