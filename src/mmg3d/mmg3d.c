@@ -256,7 +256,7 @@ int main(int argc,char *argv[]) {
   if ( mesh->mark ) {
     /* Save a local parameters file containing the default parameters */
     ier = _MMG3D_defaultOption(mesh,met);
-    _MMG5_RETURN_AND_FREE(mesh,met,disp,ier);
+    _MMG3D_RETURN_AND_FREE(mesh,met,disp,ier);
   }
   else if ( mesh->info.lag > -1 ) {
     ier = MMG3D_mmg3dmov(mesh,met,disp);

@@ -106,8 +106,11 @@ int parsar(int argc,char *argv[],MMG5_pMesh mesh,MMG5_pSol met,double *qdegrad) 
                                      atoi(argv[i])) )
             exit(EXIT_FAILURE);
         break;
-      case 'd':  /* debug */
-        if ( !strcmp(argv[i],"-degrad") ) {
+      case 'd':
+        if ( !strcmp(argv[i],"-default") ) {
+          mesh->mark=1;
+        }
+        else if ( !strcmp(argv[i],"-degrad") ) {
           ++i;
           qdegrad[0] = atof(argv[i++])/ALPHA;
           qdegrad[1] = atof(argv[i]);
@@ -373,6 +376,157 @@ static void endcod() {
   /* fprintf(stdout,"\n   ELAPSED TIME  %.2f SEC.  (%.2f)\n",ttim[0],ttot); */
 }
 
+/**
+ * \param mesh pointer toward the mesh structure.
+ * \return 1 if success, 0 otherwise.
+ *
+ * Write a DEFAULT.mmg3d file containing the default values of parameters that
+ * can be locally defined.
+ *
+ */
+static inline
+int _MMG2D_writeLocalParam( MMG5_pMesh mesh ) {
+  _MMG5_Node *bdyRefs, *cur;
+  double     dd;
+  int        npar,k,ier;
+  char       data[]="DEFAULT.mmg2d";
+  FILE       *out;
+
+  /** Count the number of different boundary references and list it */
+  bdyRefs = NULL;
+  npar = 0;
+
+  k = mesh->na? mesh->edge[1].ref : 0;
+
+  /* Try to alloc the first node */
+  ier = _MMG5_Add_node( mesh, &bdyRefs, k );
+  if ( ier < 0 ) {
+    printf("  ## Error: unable to allocate the first boundary"
+           " reference node.\n");
+    return(0);
+  }
+  else {
+    assert(ier);
+    npar = 1;
+  }
+
+  for ( k=1; k<=mesh->na; ++k ) {
+    ier = _MMG5_Add_node( mesh, &bdyRefs, mesh->edge[k].ref );
+
+    if ( ier < 0 ) {
+      printf("  ## Warning: unable to list the boundary references.\n"
+             "              Uncomplete parameters file.\n" );
+      break;
+    }
+    else if ( ier ) ++npar;
+  }
+
+  /** Save the local parameters file */
+  if ( !(out = fopen(data,"wb")) ) {
+    fprintf(stderr,"\n  ** UNABLE TO OPEN %s.\n",data);
+    return(0);
+  }
+
+  fprintf(stdout,"\n  %%%% %s OPENED\n",data);
+
+
+  fprintf(out,"parameters\n %d\n",npar);
+
+  dd = mesh->info.delta;
+  cur = bdyRefs;
+  while( cur ) {
+    fprintf(out,"%d Edge %e %e %e \n",cur->val,
+            mesh->info.hmin, mesh->info.hmax,mesh->info.hausd);
+    cur = cur->nxt;
+  }
+
+  _MMG5_Free_linkedList(mesh,bdyRefs);
+
+  fclose(out);
+  fprintf(stdout,"  -- WRITING COMPLETED\n");
+
+  return(1);
+}
+
+/**
+ * \param mesh pointer toward the mesh structure.
+ * \param met pointer toward a sol structure (metric).
+ * \return \ref MMG5_SUCCESS if success, \ref MMG5_LOWFAILURE if failed
+ * but a conform mesh is saved and \ref MMG5_STRONGFAILURE if failed and we
+ * can't save the mesh.
+ *
+ * Program to save the local default parameter file: read the mesh and metric
+ * (needed to compite the hmax/hmin parameters), scale the mesh and compute the
+ * hmax/hmin param, unscale the mesh and write the default parameter file.
+ *
+ */
+static inline
+int _MMG2D_defaultOption(MMG5_pMesh mesh,MMG5_pSol met) {
+  mytime    ctim[TIMEMAX];
+  char      stim[32];
+
+  /* interrupts */
+  signal(SIGABRT,_MMG2_excfun);
+  signal(SIGFPE,_MMG2_excfun);
+  signal(SIGILL,_MMG2_excfun);
+  signal(SIGSEGV,_MMG2_excfun);
+  signal(SIGTERM,_MMG2_excfun);
+  signal(SIGINT,_MMG2_excfun);
+
+  tminit(ctim,TIMEMAX);
+  chrono(ON,&(ctim[0]));
+
+  if ( mesh->info.npar ) {
+    fprintf(stdout,"\n  ## Error: "
+            "unable to save of a local parameter file with"
+            " the default parameters values because local parameters"
+            " are provided.\n");
+    _LIBMMG5_RETURN(mesh,met,MMG5_LOWFAILURE);
+  }
+
+
+  if ( mesh->info.imprim ) fprintf(stdout,"\n  -- INPUT DATA\n");
+  /* load data */
+  chrono(ON,&(ctim[1]));
+
+  if ( met->np && (met->np != mesh->np) ) {
+    fprintf(stdout,"  ## WARNING: WRONG SOLUTION NUMBER. IGNORED\n");
+    _MMG5_DEL_MEM(mesh,met->m,(met->size*(met->npmax+1))*sizeof(double));
+    met->np = 0;
+  }
+
+  chrono(OFF,&(ctim[1]));
+  printim(ctim[1].gdif,stim);
+  if ( mesh->info.imprim )
+    fprintf(stdout,"  --  INPUT DATA COMPLETED.     %s\n",stim);
+
+  /* analysis */
+  chrono(ON,&(ctim[2]));
+  MMG2D_setfunc(mesh,met);
+
+  if ( mesh->info.imprim ) {
+    fprintf(stdout,"\n  %s\n   MODULE MMGS: IMB-LJLL : %s (%s)\n  %s\n",MG_STR,MG_VER,MG_REL,MG_STR);
+    fprintf(stdout,"\n  -- DEFAULT PARAMETERS COMPUTATION\n");
+  }
+
+  /* scaling mesh and hmin/hmax computation*/
+  if ( !MMG2_scaleMesh(mesh,met) ) _LIBMMG5_RETURN(mesh,met,MMG5_STRONGFAILURE);
+
+  /* unscaling mesh */
+  if ( !MMG2_unscaleMesh(mesh,met) ) _LIBMMG5_RETURN(mesh,met,MMG5_STRONGFAILURE);
+
+  /* Save the local parameters file */
+  mesh->mark = 0;
+  if ( !_MMG2D_writeLocalParam(mesh) ) {
+    fprintf(stderr,"  ## Error: Unable to save the local parameters file.\n"
+            "            Exit program.\n");
+     _LIBMMG5_RETURN(mesh,met,MMG5_LOWFAILURE);
+  }
+
+  _LIBMMG5_RETURN(mesh,met,MMG5_SUCCESS);
+}
+
+
 int main(int argc,char *argv[]) {
   MMG5_pMesh    mesh;
   MMG5_pSol     sol;
@@ -448,7 +602,12 @@ int main(int argc,char *argv[]) {
   printim(MMG5_ctim[1].gdif,stim);
   fprintf(stdout,"  -- DATA READING COMPLETED.     %s\n",stim);
 
-  if ( mesh->info.lag > -1 ) {
+  if ( mesh->mark ) {
+    /* Save a local parameters file containing the default parameters */
+    ier = _MMG2D_defaultOption(mesh,sol);
+    _MMG2D_RETURN_AND_FREE(mesh,sol,ier);
+  }
+  else if ( mesh->info.lag > -1 ) {
     ier = MMG2D_mmg2dmov(mesh,sol);
   }
   else if ( mesh->info.iso ) {

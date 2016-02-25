@@ -522,7 +522,7 @@ int main(int argc,char *argv[]) {
   if ( mesh->mark ) {
     /* Save a local parameters file containing the default parameters */
     ier = _MMGS_defaultOption(mesh,met);
-    _MMG5_RETURN_AND_FREE(mesh,met,ier);
+    _MMGS_RETURN_AND_FREE(mesh,met,ier);
   }
   else {
     ier = MMGS_mmgslib(mesh,met);
