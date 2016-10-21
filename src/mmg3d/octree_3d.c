@@ -455,7 +455,7 @@ void _MMG3D_getListSquareRec(_MMG3D_octree_s* q, double* center, double* rect,
   double l = 1./(1<<(q->depth+1));
   double distTemp;
   double x,y,z;
-  int indexTemp,i;
+  int indexTemp,i,j,k,nBranch;
 
   // number max of octree cells listed for one search
   if ((*index)>nc-4)
@@ -524,142 +524,31 @@ void _MMG3D_getListSquareRec(_MMG3D_octree_s* q, double* center, double* rect,
       recCenter[i+3] = ((rect[i]+rect[i+3])>center[i]);
     }
     
-    // each of the 8 possible cases are tested to recursively call the branches :
-    
-    if (recCenter[0]==0 && recCenter[1]==0 && recCenter[2]==0) //branch 0
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0]-l;
-      recttemp[1] = center[1]-l;  
-      recttemp[2] = center[2]-l;
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]-l/2;
-      centertemp[1] = center[1]-l/2;
-      centertemp[2] = center[2]-l/2;
-      _MMG3D_getListSquareRec(&(q->branches[0]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
-      
-    if (recCenter[1]==0 && recCenter[2]==0 && recCenter[3]==1) //branch 1
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0];
-      recttemp[1] = center[1]-l;  
-      recttemp[2] = center[2]-l;
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]+l/2;
-      centertemp[1] = center[1]-l/2;
-      centertemp[2] = center[2]-l/2;
-      _MMG3D_getListSquareRec(&(q->branches[1]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
-      
-    if (recCenter[0]==0 && recCenter[2]==0 && recCenter[4]==1) //branch 2
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0]-l;
-      recttemp[1] = center[1];  
-      recttemp[2] = center[2]-l;
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]-l/2;
-      centertemp[1] = center[1]+l/2;
-      centertemp[2] = center[2]-l/2;
-      _MMG3D_getListSquareRec(&(q->branches[2]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
 
-    if (recCenter[2]==0 && recCenter[3]==1 && recCenter[4]==1) //branch 3
+    for(i=0;i<2;i++)
     {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0];
-      recttemp[1] = center[1];  
-      recttemp[2] = center[2]-l;
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]+l/2;
-      centertemp[1] = center[1]+l/2;
-      centertemp[2] = center[2]-l/2;
-      _MMG3D_getListSquareRec(&(q->branches[3]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
-    
-    if (recCenter[0]==0 && recCenter[1]==0 && recCenter[5]==1) //branch 4
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0]-l;
-      recttemp[1] = center[1]-l;  
-      recttemp[2] = center[2];
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;      
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]-l/2;
-      centertemp[1] = center[1]-l/2;
-      centertemp[2] = center[2]+l/2;
-      _MMG3D_getListSquareRec(&(q->branches[4]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
-    
-    if (recCenter[1]==0 && recCenter[3]==1 && recCenter[5]==1) //branch 5
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0];
-      recttemp[1] = center[1]-l;  
-      recttemp[2] = center[2];
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]+l/2;
-      centertemp[1] = center[1]-l/2;
-      centertemp[2] = center[2]+l/2;
-      _MMG3D_getListSquareRec(&(q->branches[5]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
+      for(j=0;j<2;j++)
+      {
+        for(k=0;k<2;k++)
+        {
+          if (((i && recCenter[3]) || (!i && !recCenter[0])) &&
+              ((j && recCenter[4]) || (!j && !recCenter[1]))&&
+              ((k && recCenter[5]) || (!k && !recCenter[2])))
+          {
+            nBranch = i+2*j+4*k;
+            recttemp[0] = center[0]-l*(1-i);
+            recttemp[1] = center[1]-l*(1-j);  
+            recttemp[2] = center[2]-l*(1-k); 
+            recttemp[3] = recttemp[4] = recttemp[5] = l;
+            _MMG3D_intersectRect(rect,recttemp);
+            centertemp[0] = center[0]-l/2+i*l;
+            centertemp[1] = center[1]-l/2+j*l;
+            centertemp[2] = center[2]-l/2+k*l;
 
-    if (recCenter[0]==0 && recCenter[4]==1 && recCenter[5]==1) //branch 6
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0]-l;
-      recttemp[1] = center[1];  
-      recttemp[2] = center[2];
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]-l/2;
-      centertemp[1] = center[1]+l/2;
-      centertemp[2] = center[2]+l/2;
-      _MMG3D_getListSquareRec(&(q->branches[6]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
-    }
-    
-    if (recCenter[3]==1 && recCenter[4]==1 && recCenter[5]==1) //branch 7
-    {
-      //~ recttemp is set to the sub-cell dimensions
-      recttemp[0] = center[0];
-      recttemp[1] = center[1];  
-      recttemp[2] = center[2];
-      recttemp[3] = l;
-      recttemp[4] = l;
-      recttemp[5] = l;
-      // recttemp is set to the intersection between rect and the cell
-      _MMG3D_intersectRect(rect,recttemp);
-      centertemp[0] = center[0]+l/2;
-      centertemp[1] = center[1]+l/2;
-      centertemp[2] = center[2]+l/2;
-      _MMG3D_getListSquareRec(&(q->branches[7]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
+            _MMG3D_getListSquareRec(&(q->branches[nBranch]), centertemp, recttemp, qlist, dist, ani, l0, nc, dim, index);
+          }
+        }
+      }
     }
   }
   _MMG5_SAFE_FREE(recttemp);
