@@ -489,10 +489,10 @@ void _MMG3D_getListSquareRec(_MMG3D_octree_s* q, double* center, double* rect,
     y = dist[nc-2] - center[1];
     z = dist[nc-1] - center[2];
     //#warning should be replaced with distance in metric?
-    distTemp = x*x+y*y+z*z;
+    //~ distTemp = x*x+y*y+z*z;
     //~ #warning anisotropic distance not tested (not so important, this only reorders the cells)
-    //~ distTemp = ani[0]*x*x+ani[3]*y*y+ani[5]*z*z+
-                //~ 2*(ani[1]*x*y+ani[2]*x*z+ani[4]*y*z);
+    distTemp = ani[0]*x*x+ani[3]*y*y+ani[5]*z*z+
+                2*(ani[1]*x*y+ani[2]*x*z+ani[4]*y*z);
     if (*index > 0)
     {
       indexTemp = _MMG3D_seekIndex(dist,distTemp,0, *index-1);    
